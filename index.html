@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>FatherOS v5.2</title>
+
+<link href="https://fonts.googleapis.com/css?family=Audiowide" rel="stylesheet">
+
+<style>
+body {
+  background: black;
+  color: #00ff00;
+  font-family: "Audiowide", monospace;
+  text-align: center;
+}
+
+.koffie {
+  width: 150px;
+  height: 120px;
+}
+
+.box {
+  border: 1px solid #00ff00;
+  padding: 20px;
+  width: 520px;
+  margin: 20px auto;
+  box-shadow: 0 0 10px #00ff00;
+}
+
+button {
+  background: black;
+  border: 1px solid #00ff00;
+  color: #00ff00;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #00ff00;
+  color: black;
+}
+
+/* BAR */
+.bar-container {
+  width: 420px;
+  height: 25px;
+  border: 2px solid #00ff00;
+  margin: 20px auto;
+}
+
+.bar {
+  height: 100%;
+  width: 0%;
+  background: #00ff00;
+}
+
+/* ERROR BOX */
+#errorBox {
+  display: none;
+  border: 2px solid #ff0000;
+  color: #ff3b3b;
+  padding: 20px;
+  width: 480px;
+  margin: 20px auto;
+  background: rgba(40,0,0,0.95);
+  box-shadow: 0 0 25px #ff0000;
+  transition: opacity 1s, transform 1s;
+}
+
+/* TEXT ANIMATIONS */
+.error-title {
+  animation: textBlink 0.6s infinite;
+}
+
+.warning-text {
+  animation: textBlinkSoft 1.3s infinite;
+}
+
+@keyframes textBlink {
+  0% { opacity: 1; }
+  50% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+
+@keyframes textBlinkSoft {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* CODE STYLE */
+.codebox {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  padding: 15px;
+  text-align: left;
+  font-family: Consolas, monospace;
+  margin: 15px 0;
+}
+
+.keyword { color: #ff7b72; }
+.variable { color: #79c0ff; }
+.boolean { color: #ffa657; }
+.comment { color: #8b949e; }
+
+/* SPINNER */
+.spinner {
+  border: 4px solid #222;
+  border-top: 4px solid #00ff00;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  margin: 10px auto;
+  animation: spin 1s linear infinite;
+  display:none;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="login" class="box">
+  <h2>welkom</h2>
+  <input id="nameInput" placeholder="naam..." />
+  <br><br>
+  <button onclick="login()">LOGIN</button>
+</div>
+
+<!-- INTRO 1 -->
+<div id="intro1" class="box" style="display:none;">
+  <h1 id="boot"></h1>
+  <button onclick="next1()">Verder</button>
+</div>
+
+<!-- INTRO 2 -->
+<div id="intro2" class="box" style="display:none;">
+  <p id="msg"></p>
+  <button onclick="next2()">Bekijk verrassing</button>
+</div>
+
+<!-- INTRO 3 -->
+<div id="intro3" class="box" style="display:none;">
+
+  <div class="bar-container">
+    <div class="bar" id="bar"></div>
+  </div>
+
+  <div id="text">Initializing FatherOS...</div>
+
+  <div id="spinner" class="spinner"></div>
+
+  <div id="errorBox">
+
+    <h2 class="error-title">⚠ CRITICAL SYSTEM FAILURE</h2>
+
+    <p class="warning-text">
+      !  ERROR DETECTED ! <br>
+      code does not contain truth...
+    </p>
+
+    <div class="codebox">
+
+      <span class="comment">// Father verification script</span><br>
+
+      <span class="keyword">const</span>
+      <span class="variable">dad</span>
+      =
+      <span class="string">"hillebrand gelderblom"</span>;
+      <br><br>
+
+      <span class="keyword">const</span>
+      <span class="variable">coding_skill</span>
+      =
+      <span class="boolean">true</span>;
+      <br>
+
+      <span class="keyword">const</span>
+      <span class="variable">vibe_coding_legend</span>
+      =
+      <span class="boolean">true</span>;
+      <br>
+
+      <span class="keyword">const</span>
+      <span class="variable">best_dad</span>
+      =
+      <span class="boolean">false</span>;
+      <br><br>
+
+      <div class="errorline">
+        ❌ ERROR: best_dad returned false
+      </div>
+
+    </div>
+
+    <input id="fixInput" value="best_dad = " />
+    <br><br>
+
+    <button onclick="checkFix()">RUN PATCH</button>
+
+  </div>
+</div>
+
+<!-- UNLOCK -->
+<div id="unlock" class="box" style="display:none;">
+  <h2>fijne vaderdag !!!</h2>
+  <p>jouw vaderdag cadeau:<br><h3>25 tokens</h3><br>ruil deze tokens in voor iets lekkers!</p>
+  <button onclick="goTokens()">go to shop</button>
+</div>
+
+<!-- VADER -->
+<div id="dad" class="box" style="display:none;">
+  <h2>☕ Token Shop</h2>
+  <p id="tokens"></p>
+
+  <button class="koffie" onclick="buy('Ijskoffie',1)">
+    <h4>Ijskoffie</h4><p>1 token</p>
+  </button>
+
+  <button class="koffie" onclick="buy('Espresso',1)">
+    <h4>Espresso</h4><p>1 token</p>
+  </button>
+
+  <button class="koffie" onclick="buy('gebak',1)">
+    <h4>gebak</h4><p>2 tokens</p>
+  </button>
+  <br>
+  <p> je dochters zullen je bestelling Z.S.M. serveren </P>
+</div>
+
+<!-- MARIA -->
+<div id="evelien" class="box" style="display:none;">
+  <h2>Order Panel</h2>
+  <div id="orders"></div>
+  <br>
+  <button onclick="reset()">RESET</button>
+</div>
+
+<script>
+
+/* DATA */
+function getData(){
+  return JSON.parse(localStorage.getItem("fatherOS")) || {
+    tokens:25,
+    orders:[],
+    introDone:false
+  };
+}
+
+function save(d){
+  localStorage.setItem("fatherOS", JSON.stringify(d));
+}
+
+/* LOGIN */
+function login(){
+  const n=document.getElementById("nameInput").value.toLowerCase();
+  const d=getData();
+
+  document.getElementById("login").style.display="none";
+
+  if(n.includes("hillebrand")){
+    if(!d.introDone){
+      document.getElementById("intro1").style.display="block";
+      type(document.getElementById("boot"),"welkom bij jouw vaderdags cadeau...");
+    } else {
+      document.getElementById("dad").style.display="block";
+      updateDad();
+    }
+  }
+
+  if(n.includes("evelien")){
+    document.getElementById("evelien").style.display="block";
+    updateMaria();
+  }
+}
+
+/* TYPE */
+function type(el,t,s=40){
+  let i=0; el.innerHTML="";
+  let x=setInterval(()=>{
+    el.innerHTML+=t[i++];
+    if(i>=t.length) clearInterval(x);
+  },s);
+}
+
+/* FLOW */
+function next1(){
+  document.getElementById("intro1").style.display="none";
+  document.getElementById("intro2").style.display="block";
+  type(document.getElementById("msg"),
+  "allerbeste papa,                "+
+  "ik vind het altijd heel leuk om samen te vibe-coden en daarom heb ik voor vaderdag deze website gecodeert!!!                                          \n "+
+  "\nik heb ook nog een kleine verassing!                 klik hier onder om je verassing te bekijken..." );
+}
+
+function next2(){
+  document.getElementById("intro2").style.display="none";
+  document.getElementById("intro3").style.display="block";
+  load();
+}
+
+/* LOADING FIXED */
+function load(){
+
+const bar = document.getElementById("bar");
+const text = document.getElementById("text");
+const err = document.getElementById("errorBox");
+
+bar.style.width = "0%";
+text.innerText = "";
+
+const messages = [
+  "loading present...",
+  "prepairing surprise...",
+  "checking father information...",
+  "Verifying best_dad variable..."
+];
+
+let p = 0;
+let msgIndex = 0;
+
+let i = setInterval(()=>{
+
+  p++;
+  bar.style.width = p + "%";
+
+  const checkpoints = [2, 25, 50, 75];
+
+if (checkpoints.includes(p)) {
+  if (msgIndex < messages.length) {
+    text.innerText = messages[msgIndex];
+    msgIndex++;
+  }
+}
+
+
+  if (p === 80) {
+    clearInterval(i);
+    text.innerHTML = "⚠ SYSTEM FAILURE";
+    err.style.display = "block";
+  }
+
+},200);
+
+}
+
+/* FIX SAFE */
+function checkFix(){
+  const v=document.getElementById("fixInput").value;
+  const spinner=document.getElementById("spinner");
+
+  if(v.toLowerCase().includes("best_dad = true")){
+
+    spinner.style.display="block";
+    document.getElementById("errorBox").style.display="none";
+
+    document.getElementById("text").innerHTML =
+    "PATCH DETECTED<br>Applying changes...";
+
+    setTimeout(()=>{
+
+      let d=getData();
+      d.introDone=true;
+      save(d);
+
+      spinner.style.display="none";
+
+      document.getElementById("text").innerHTML =
+      "✅ PATCH APPLIED <br><br><b> best_dad = true</b>";
+
+      setTimeout(()=>{
+
+        let p=55;
+        let bar=document.getElementById("bar");
+
+        let x=setInterval(()=>{
+          p+=2;
+          bar.style.width=p+"%";
+
+          if(p>=100){
+            clearInterval(x);
+            document.getElementById("intro3").style.display="none";
+            document.getElementById("unlock").style.display="block";
+          }
+        },60);
+
+      },2000);
+
+    },1500);
+  }
+}
+
+/* TOKENS */
+function goTokens(){
+  document.getElementById("unlock").style.display="none";
+  document.getElementById("dad").style.display="block";
+  updateDad();
+}
+
+function updateDad(){
+  let d=getData();
+  document.getElementById("tokens").innerText="Tokens: "+d.tokens;
+}
+
+function buy(type,cost){
+  let d=getData();
+
+  if(d.tokens < cost){
+    alert("Niet genoeg tokens");
+    return;
+  }
+
+  d.tokens -= cost;
+
+  d.orders.push({
+    type,
+    time:new Date().toLocaleTimeString()
+  });
+
+  save(d);
+  updateDad();
+}
+
+/* MARIA */
+function updateMaria(){
+  let d=getData();
+  document.getElementById("orders").innerHTML =
+    d.orders.map(o =>
+      "☕ " + o.type + " - " + o.time
+    ).join("<br>") || "geen orders";
+}
+
+/* RESET */
+function reset(){
+  localStorage.removeItem("fatherOS");
+  location.reload();
+}
+
+</script>
+
+</body>
+</html>
