@@ -240,8 +240,22 @@ button:hover {
   <button onclick="reset()">RESET</button>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
 
+const firebaseConfig = {
+  apiKey: "AIzaSyAe-BIE6AANcNaGW_-TrEgteAM6iOFabSY",
+  authDomain: "fathersdaygift.firebaseapp.com",
+  databaseURL: "https://fathersdaygift-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "fathersdaygift",
+  storageBucket: "fathersdaygift.firebasestorage.app",
+  messagingSenderId: "116676775482",
+  appId: "1:116676775482:web:3a97150b6656a6ae696f03"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 /* DATA */
 function getData(){
   return JSON.parse(localStorage.getItem("fatherOS")) || {
@@ -407,7 +421,31 @@ function updateDad(){
 }
 
 function buy(type,cost){
-  let d=getData();
+  let d = getData();
+
+  if(d.tokens < cost){
+    alert("Niet genoeg tokens");
+    return;
+  }
+
+  d.tokens -= cost;
+
+  const order = {
+    type: type,
+    time: new Date().toLocaleTimeString()
+  };
+
+  d.orders.push(order);
+  save(d);
+
+  // 🔥 FIREBASE PUSH
+  db.ref("orders").push(order);
+
+  // tokens sync
+  db.ref("tokens").set(d.tokens);
+
+  updateDad();
+}
 
   if(d.tokens < cost){
     alert("Niet genoeg tokens");
@@ -427,19 +465,35 @@ function buy(type,cost){
 
 /* MARIA */
 function updateMaria(){
-  let d=getData();
-  document.getElementById("orders").innerHTML =
-    d.orders.map(o =>
-      "☕ " + o.type + " - " + o.time
-    ).join("<br>") || "geen orders";
+  const ordersDiv = document.getElementById("orders");
+
+  db.ref("orders").on("value", snapshot => {
+    const data = snapshot.val();
+
+    if(!data){
+      ordersDiv.innerHTML = "geen orders";
+      return;
+    }
+
+    let html = "";
+
+    Object.values(data).forEach(o => {
+      html += "☕ " + o.type + " - " + o.time + "<br>";
+    });
+
+    ordersDiv.innerHTML = html;
+  });
 }
 
 /* RESET */
 function reset(){
   localStorage.removeItem("fatherOS");
+
+  db.ref("orders").remove();
+  db.ref("tokens").set(25);
+
   location.reload();
 }
-
 </script>
 
 </body>
