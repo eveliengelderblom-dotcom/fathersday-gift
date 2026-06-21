@@ -420,7 +420,7 @@ function updateDad(){
   document.getElementById("tokens").innerText="Tokens: "+d.tokens;
 }
 
-function buy(type,cost){
+function buy(type, cost){
   let d = getData();
 
   if(d.tokens < cost){
@@ -438,15 +438,12 @@ function buy(type,cost){
   d.orders.push(order);
   save(d);
 
-  // 🔥 FIREBASE PUSH
+  // Firebase sync
   db.ref("orders").push(order);
-
-  // tokens sync
   db.ref("tokens").set(d.tokens);
 
   updateDad();
 }
-
 
 /* MARIA */
 function updateMaria(){
