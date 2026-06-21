@@ -447,21 +447,6 @@ function buy(type,cost){
   updateDad();
 }
 
-  if(d.tokens < cost){
-    alert("Niet genoeg tokens");
-    return;
-  }
-
-  d.tokens -= cost;
-
-  d.orders.push({
-    type,
-    time:new Date().toLocaleTimeString()
-  });
-
-  save(d);
-  updateDad();
-}
 
 /* MARIA */
 function updateMaria(){
